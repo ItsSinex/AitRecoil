@@ -45,6 +45,9 @@ namespace AitRecoil
         private static IntPtr _hookID = IntPtr.Zero;
         private Dictionary<Key, string> hotkeyPresetMap = new Dictionary<Key, string>();
 
+        private double accumulatedX = 0;
+        private double accumulatedY = 0;
+
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
@@ -317,21 +320,45 @@ namespace AitRecoil
 
                 if (leftPressed && rightPressed)
                 {
-                    float vertical = 0;
-                    float horizontal = 0;
+                    double vertical = 0;
+                    double horizontal = 0;
 
+                    // Read current slider values on the UI thread
                     Dispatcher.Invoke(() =>
                     {
-                        vertical = (float)sliderVertical.Value;
-                        horizontal = (float)sliderHorizontal.Value;
+                        vertical = sliderVertical.Value;
+                        horizontal = sliderHorizontal.Value;
                     });
 
-                    MoveCursorRelative((int)horizontal, (int)vertical);
+                    // Accumulate fractional movement
+                    accumulatedX += horizontal;
+                    accumulatedY += vertical;
+
+                    // Convert accumulated values to whole pixels
+                    int moveX = (int)Math.Truncate(accumulatedX);
+                    int moveY = (int)Math.Truncate(accumulatedY);
+
+                    // Remove the part we've actually used
+                    accumulatedX -= moveX;
+                    accumulatedY -= moveY;
+
+                    // Only send input if there is real movement
+                    if (moveX != 0 || moveY != 0)
+                    {
+                        MoveCursorRelative(moveX, moveY);
+                    }
+                }
+                else
+                {
+                    // When not firing, reset so we don't "dump" stored movement later
+                    accumulatedX = 0;
+                    accumulatedY = 0;
                 }
 
                 Thread.Sleep(5);
             }
         }
+
 
         private void MoveCursorRelative(int dx, int dy)
         {
