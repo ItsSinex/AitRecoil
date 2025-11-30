@@ -1,5 +1,9 @@
 # Ait Recoil – Anti-Recoil Macro
 
+## Screenshot
+
+!(assets/screenshot.png)
+
 Ait Recoil is a Windows-only **anti-recoil macro** built with WPF and low-level Win32 APIs.  
 It lets you:
 
