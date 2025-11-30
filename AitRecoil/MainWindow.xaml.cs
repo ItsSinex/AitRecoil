@@ -10,7 +10,6 @@ using System.Windows.Interop;
 
 namespace AitRecoil
 {
-
     public partial class MainWindow : Window
     {
         [StructLayout(LayoutKind.Sequential)]
