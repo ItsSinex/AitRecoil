@@ -22,8 +22,6 @@ namespace AitRecoil
             public IntPtr dwExtraInfo;
         }
 
-
-
         const uint INPUT_MOUSE = 0;
         const uint MOUSEEVENTF_MOVE = 0x0001;
         const int VK_LBUTTON = 0x01;
@@ -44,6 +42,7 @@ namespace AitRecoil
         private static IntPtr _hookID = IntPtr.Zero;
         private Dictionary<Key, string> hotkeyPresetMap = new Dictionary<Key, string>();
 
+        // Sub-pixel accumulation for precise recoil
         private double accumulatedX = 0;
         private double accumulatedY = 0;
 
@@ -71,13 +70,12 @@ namespace AitRecoil
         public MainWindow()
         {
             InitializeComponent();
+
             presetManager.Load();
             RefreshPresetCombo();
 
             sliderVertical.Value = 0;
             sliderHorizontal.Value = 0;
-
-            this.KeyDown += Window_KeyDown;
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
@@ -91,6 +89,7 @@ namespace AitRecoil
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             UnregisterAllHotkeysHook();
+            recoilActive = false;
         }
 
         private IntPtr SetHook(LowLevelKeyboardProc proc)
@@ -101,6 +100,7 @@ namespace AitRecoil
                 return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
             }
         }
+
         private void RegisterAllPresetHotkeysHook()
         {
             // Always unhook first
@@ -238,9 +238,50 @@ namespace AitRecoil
                     presetManager.AddOrUpdatePreset(preset);
                     RegisterAllPresetHotkeysHook();
 
-                    MessageBox.Show($"Shortcut cleared for preset '{preset.Name}'.", "Keybind Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(
+                        $"Shortcut cleared for preset '{preset.Name}'.",
+                        "Keybind Deleted",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
             }
+        }
+
+        private void btnDeleteAllShortcuts_Click(object sender, RoutedEventArgs e)
+        {
+            if (presetManager.Presets.Count == 0)
+            {
+                MessageBox.Show(
+                    "There are no presets to clear.",
+                    "No Presets",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                "This will clear the shortcut key for ALL presets. Continue?",
+                "Clear All Shortcuts",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            foreach (var preset in presetManager.Presets)
+            {
+                preset.ShortcutKey = string.Empty;
+            }
+
+            presetManager.Save();
+            txtShortcutKey.Text = string.Empty;
+            RegisterAllPresetHotkeysHook();
+
+            MessageBox.Show(
+                "All preset shortcuts have been cleared.",
+                "Shortcuts Cleared",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -257,8 +298,7 @@ namespace AitRecoil
                     $"Key '{key}' is already assigned to preset '{existingPreset}'. Please choose another key.",
                     "Shortcut Already Assigned",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                    MessageBoxImage.Warning);
                 txtShortcutKey.Text = "";
                 waitingForShortcut = true; // allow user to press another key
                 return;
@@ -281,12 +321,10 @@ namespace AitRecoil
                         $"Shortcut '{recoilPreset.ShortcutKey}' assigned to preset '{recoilPreset.Name}'.",
                         "Shortcut Saved",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Asterisk
-                    );
+                        MessageBoxImage.Asterisk);
                 }
             }
         }
-
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
@@ -333,9 +371,19 @@ namespace AitRecoil
                     accumulatedX += horizontal;
                     accumulatedY += vertical;
 
-                    // Convert accumulated values to whole pixels
-                    int moveX = (int)Math.Truncate(accumulatedX);
-                    int moveY = (int)Math.Truncate(accumulatedY);
+                    int moveX = 0;
+                    int moveY = 0;
+
+                    // Only move when magnitude >= 1 in either direction
+                    if (accumulatedX >= 1.0)
+                        moveX = (int)Math.Floor(accumulatedX);
+                    else if (accumulatedX <= -1.0)
+                        moveX = (int)Math.Ceiling(accumulatedX);
+
+                    if (accumulatedY >= 1.0)
+                        moveY = (int)Math.Floor(accumulatedY);
+                    else if (accumulatedY <= -1.0)
+                        moveY = (int)Math.Ceiling(accumulatedY);
 
                     // Remove the part we've actually used
                     accumulatedX -= moveX;
@@ -357,7 +405,6 @@ namespace AitRecoil
                 Thread.Sleep(5);
             }
         }
-
 
         private void MoveCursorRelative(int dx, int dy)
         {

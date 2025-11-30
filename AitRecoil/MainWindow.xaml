@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Ait Recoil"
-        Height="440"
-        Width="720"
+        Height="460"
+        Width="1060"
         ResizeMode="NoResize"
         Background="#101010"
         WindowStartupLocation="CenterScreen"
@@ -160,12 +160,12 @@
                 BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.4*"/>
+                    <ColumnDefinition Width="1.2*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- LEFT SIDE: Recoil settings + Start/Stop -->
-                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <StackPanel Grid.Column="0" Margin="0,0,16,0">
                     <!-- Recoil Settings -->
                     <GroupBox Header="Recoil Settings" Style="{StaticResource CardGroupBox}">
                         <StackPanel>
@@ -174,7 +174,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Content="Vertical:"/>
                                 <Slider Grid.Column="1"
@@ -196,7 +196,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Content="Horizontal:"/>
                                 <Slider Grid.Column="1"
@@ -225,11 +225,11 @@
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
                         <Button Name="btnStart"
                                 Content="Start"
-                                Width="110"
+                                Width="120"
                                 Click="btnStart_Click"/>
                         <Button Name="btnStop"
                                 Content="Stop"
-                                Width="110"
+                                Width="120"
                                 Margin="8,0,0,0"
                                 Background="#FF7043"
                                 Click="btnStop_Click"/>
@@ -237,77 +237,82 @@
                                    Foreground="#BBBBBB"
                                    FontSize="11"
                                    VerticalAlignment="Center"
-                                   Text="Hold Right + Left mouse to apply recoil."/>
+                                   Text="Hold Right + Left mouse."/>
                     </StackPanel>
                 </StackPanel>
 
                 <!-- RIGHT SIDE: Presets -->
-                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                <StackPanel Grid.Column="1">
                     <!-- Preset Management -->
                     <GroupBox Header="Preset Management" Style="{StaticResource CardGroupBox}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
+                        <StackPanel>
                             <!-- Preset Name -->
-                            <Label Grid.Row="0" Grid.Column="0" Content="Preset name:"/>
-                            <TextBox Grid.Row="0"
-                                     Grid.Column="1"
-                                     Name="txtPresetName"
-                                     Margin="4,0,0,4"
-                                     ToolTip="Example: AK-47, M4, etc."/>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Preset name:"/>
+                                <TextBox Grid.Column="1"
+                                         Name="txtPresetName"
+                                         Margin="6,0,0,0"
+                                         ToolTip="Example: AK-47, M4, etc."/>
+                            </Grid>
 
-                            <!-- Shortcut -->
-                            <Label Grid.Row="1" Grid.Column="0" Content="Shortcut key:"/>
-                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="4,0,0,4">
-                                <TextBox Name="txtShortcutKey"
-                                         Width="90"
-                                         IsReadOnly="True"
-                                         ToolTip="Click 'Set Key' and press a key."
-                                         HorizontalContentAlignment="Center"/>
-                                <Button Name="btnSetShortcut"
-                                        Content="Set Key"
-                                        Width="70"
-                                        Margin="6,0,0,0"
-                                        Click="btnSetShortcut_Click"/>
-                                <Button Name="btnDeleteShortcut"
-                                        Content="Clear"
-                                        Width="60"
-                                        Margin="6,0,0,0"
-                                        Click="btnDeleteShortcut_Click"/>
-                            </StackPanel>
+                            <!-- Shortcut row with Set / Clear buttons -->
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Shortcut key:"/>
+                                <WrapPanel Grid.Column="1"
+                                           Margin="6,0,0,0">
+                                    <TextBox Name="txtShortcutKey"
+                                             Width="100"
+                                             IsReadOnly="True"
+                                             ToolTip="Click 'Set Key' and press a key."
+                                             HorizontalContentAlignment="Center"/>
+                                    <Button Name="btnSetShortcut"
+                                            Content="Set Key"
+                                            MinWidth="80"
+                                            Margin="8,0,0,0"
+                                            Click="btnSetShortcut_Click"/>
+                                    <Button Name="btnDeleteShortcut"
+                                            Content="Clear Shortcut"
+                                            MinWidth="80"
+                                            Margin="8,0,0,0"
+                                            Click="btnDeleteShortcut_Click"/>
+                                </WrapPanel>
+                            </Grid>
 
-                            <!-- Save / Delete buttons -->
-                            <StackPanel Grid.Row="2"
-                                        Grid.ColumnSpan="2"
-                                        Orientation="Horizontal"
-                                        Margin="0,6,0,0"
-                                        HorizontalAlignment="Right">
+                            <!-- Save / Delete / Clear All in one row (wrap if needed) -->
+                            <WrapPanel Margin="0,4,0,0"
+                                       HorizontalAlignment="Right">
                                 <Button Name="btnSavePreset"
                                         Content="Save / Update"
-                                        Width="110"
+                                        MinWidth="110"
+                                        Margin="0,0,6,0"
                                         Click="btnSavePreset_Click"/>
                                 <Button Name="btnDeletePreset"
-                                        Content="Delete"
-                                        Width="80"
-                                        Margin="6,0,0,0"
+                                        Content="Delete Preset"
+                                        MinWidth="80"
+                                        Margin="0,0,6,0"
                                         Click="btnDeletePreset_Click"/>
-                            </StackPanel>
-                        </Grid>
+                                <Button Name="btnDeleteAllShortcuts"
+                                        Content="Clear All Shortcuts"
+                                        MinWidth="140"
+                                        Click="btnDeleteAllShortcuts_Click"
+                                        ToolTip="Remove all shortcut keys from every preset."/>
+                            </WrapPanel>
+                        </StackPanel>
                     </GroupBox>
 
                     <!-- Load Preset -->
                     <GroupBox Header="Load Preset" Style="{StaticResource CardGroupBox}">
                         <StackPanel>
                             <ComboBox Name="comboPresets"
-                                      Width="200"
+                                      Width="220"
                                       Margin="0,0,0,4"
                                       SelectionChanged="comboPresets_SelectionChanged"
                                       ToolTip="Choose a preset to load its settings."/>
