@@ -1,0 +1,111 @@
+﻿<Window x:Class="AitRecoil.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ait Recoil" 
+        Height="390" Width="620"
+        ResizeMode="NoResize"
+        Background="#1E1E1E"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Recoil Sliders Panel -->
+        <GroupBox Header="Recoil Settings" Foreground="White" FontWeight="Bold" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical" Margin="10">
+                <!-- Vertical -->
+                <DockPanel Margin="0,0,0,5">
+                    <Label Content="Vertical:" Width="80" Foreground="White" VerticalAlignment="Center"/>
+                    <Slider Name="sliderVertical" Minimum="0" Maximum="50" Value="0" Width="250" Margin="5,0"/>
+                    <TextBox Text="{Binding ElementName=sliderVertical, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" 
+                             Width="50" Foreground="White" Background="#2E2E2E" BorderBrush="Gray" VerticalContentAlignment="Center" Margin="5,0"/>
+                </DockPanel>
+
+                <!-- Horizontal -->
+                <DockPanel>
+                    <Label Content="Horizontal:" Width="80" Foreground="White" VerticalAlignment="Center"/>
+                    <Slider Name="sliderHorizontal" Minimum="-50" Maximum="50" Value="0" Width="250" Margin="5,0"/>
+                    <TextBox Text="{Binding ElementName=sliderHorizontal, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" 
+                             Width="50" Foreground="White" Background="#2E2E2E" BorderBrush="Gray" VerticalContentAlignment="Center" Margin="5,0"/>
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Preset Panel -->
+        <GroupBox Header="Preset Management" Foreground="White" FontWeight="Bold" Grid.Row="1" Margin="0,0,0,10">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <!-- Preset label -->
+                    <ColumnDefinition Width="150"/>
+                    <!-- Preset textbox -->
+                    <ColumnDefinition Width="70"/>
+                    <!-- Shortcut label -->
+                    <ColumnDefinition Width="50"/>
+                    <!-- Shortcut textbox -->
+                    <ColumnDefinition Width="60"/>
+                    <!-- Set shortcut button -->
+                    <ColumnDefinition Width="100"/>
+                    <!-- Delete shortcut button -->
+                </Grid.ColumnDefinitions>
+
+                <!-- First row: Preset Name and Shortcut -->
+                <Label Content="Preset Name:" Foreground="White" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                <TextBox Name="txtPresetName" Width="150" Margin="5,0" Grid.Row="0" Grid.Column="1"/>
+
+                <Label Content="Shortcut:" Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0" Grid.Row="0" Grid.Column="2"/>
+                <TextBox Name="txtShortcutKey" IsReadOnly="True" Background="#2E2E2E" Foreground="White" Margin="5,0,37,25" Grid.Row="0" Grid.Column="3" ToolTip="Click 'Set' and press a key" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+
+                <Button Name="btnSetShortcut" Content="Set Key" Width="60" Margin="28,0,72,1" Grid.Row="0" Grid.Column="4" Click="btnSetShortcut_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+                <Button Name="btnDeleteShortcut" Content="Delete Key" Margin="36,0,-18,1" Grid.Row="0" Grid.Column="5" Click="btnDeleteShortcut_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+                <!-- Second row: Save/Update & Delete preset buttons -->
+                <Button Name="btnSavePreset" Content="Save/Update" Width="120" Margin="0,5,10,0" Grid.Row="1" Grid.Column="1" Click="btnSavePreset_Click"/>
+                <Button Name="btnDeletePreset" Content="Delete" Width="100" Margin="140,5,30,0" Grid.Row="1" Grid.Column="1" Click="btnDeletePreset_Click" Grid.ColumnSpan="3" />
+            </Grid>
+        </GroupBox>
+
+
+        <!-- 📂 Load Preset -->
+        <GroupBox Header="Load Preset" Foreground="White" FontWeight="Bold" Grid.Row="2" Margin="0,0,0,10"
+          BorderBrush="White" BorderThickness="1" Padding="10">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Load Preset:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <ComboBox Name="comboPresets" Width="200" Margin="5,0" SelectionChanged="comboPresets_SelectionChanged"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Start/Stop Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,0,0,10" HorizontalAlignment="Left">
+            <Button Name="btnStart" Content="Start" Width="100" Click="btnStart_Click" Background="#2E2E2E" Foreground="White"/>
+            <Button Name="btnStop" Content="Stop" Width="100" Margin="10,0,0,0" Click="btnStop_Click" Background="#FF7043" Foreground="White"/>
+        </StackPanel>
+
+        <!-- Footer Text -->
+        <TextBlock Grid.Row="3" 
+           Text="Auto Recoil Control by Sinex" 
+           HorizontalAlignment="Right" 
+           VerticalAlignment="Top" 
+           FontSize="14" 
+           FontWeight="Bold" 
+           FontStyle="Italic" 
+           Foreground="DarkOrange" Height="31" Margin="0,5,10,0" Grid.RowSpan="3" Width="209">
+            <TextBlock.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="0" Opacity="0.7"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+    </Grid>
+</Window>
